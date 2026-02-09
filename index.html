@@ -10,18 +10,18 @@
     <title>Agenda Cultural Madrid</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-h-screen; padding: 20px; padding-bottom: 60px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; padding-bottom: 60px; }
         .container { max-width: 600px; margin: 0 auto; }
         header { background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
         h1 { font-size: 24px; color: #333; margin-bottom: 15px; }
-        .view-toggle { display: flex; gap: 10px; }
-        .view-btn { flex: 1; padding: 12px; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .view-toggle { display: flex; gap: 8px; }
+        .view-btn { flex: 1; padding: 12px; border: none; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
         .view-btn.active { background: #9333ea; color: white; }
         .view-btn:not(.active) { background: #f3f4f6; color: #666; }
-        .filters, .categories { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; padding: 5px; -webkit-overflow-scrolling: touch; }
-        .filters::-webkit-scrollbar, .categories::-webkit-scrollbar { display: none; }
-        .filter-btn, .cat-btn { background: white; border: 2px solid transparent; padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; color: #666; }
-        .filter-btn.active, .cat-btn.active { border-color: #9333ea; color: #9333ea; box-shadow: 0 4px 12px rgba(147, 51, 234, 0.2); }
+        .filters, .categories, .map-tabs { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; padding: 5px; -webkit-overflow-scrolling: touch; }
+        .filters::-webkit-scrollbar, .categories::-webkit-scrollbar, .map-tabs::-webkit-scrollbar { display: none; }
+        .filter-btn, .cat-btn, .map-tab-btn { background: white; border: 2px solid transparent; padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; color: #666; }
+        .filter-btn.active, .cat-btn.active, .map-tab-btn.active { border-color: #9333ea; color: #9333ea; box-shadow: 0 4px 12px rgba(147, 51, 234, 0.2); }
         .events-list, .exhibitions-list { display: flex; flex-direction: column; gap: 15px; }
         .event-card, .expo-card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; }
         .event-card { border-left: 5px solid #9333ea; }
@@ -42,6 +42,11 @@
         .expo-info { background: white; border-radius: 16px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .expo-info p { font-size: 14px; color: #666; }
         .cta-btn { display: inline-block; background: #9333ea; color: white; padding: 10px 20px; border-radius: 10px; font-weight: 600; text-decoration: none; margin-top: 10px; }
+        .map-container { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 15px; }
+        .map-iframe { width: 100%; height: 500px; border: none; border-radius: 12px; }
+        .map-info { background: #f3e8ff; padding: 15px; border-radius: 12px; margin-top: 15px; }
+        .map-info p { font-size: 14px; color: #666; margin-bottom: 10px; }
+        .map-info a { color: #9333ea; font-weight: 600; text-decoration: none; }
     </style>
 </head>
 <body>
@@ -51,6 +56,7 @@
             <div class="view-toggle">
                 <button class="view-btn active" onclick="showView('agenda')">📅 Agenda</button>
                 <button class="view-btn" onclick="showView('exposiciones')">🎨 Exposiciones</button>
+                <button class="view-btn" onclick="showView('mapa')">🗺️ Mapa</button>
             </div>
         </header>
 
@@ -77,6 +83,16 @@
             </div>
             <div id="exhibitionsList" class="exhibitions-list"></div>
         </div>
+
+        <div id="mapaView" class="hidden">
+            <div class="map-container">
+                <iframe class="map-iframe" src="https://www.google.com/maps/d/u/0/embed?mid=10nIiJQze5J4xbDvuu-c9tMRvNeFlz9E&ehbc=2E312F" loading="lazy"></iframe>
+                <div class="map-info">
+                    <p>🍷 Bares españoles auténticos de Madrid</p>
+                    <a href="https://www.google.com/maps/d/u/0/viewer?mid=10nIiJQze5J4xbDvuu-c9tMRvNeFlz9E" target="_blank">Abrir en Google Maps →</a>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -92,13 +108,26 @@
             {id:'9',titulo:'The Fisher King (Cinemascope 35mm)',fecha:'2026-02-22',hora:'17:30',lugar:'C. de Mira, el Río Baja, 11B',descripcion:'Proyección en formato espectacular 35mm',categoria:'Cine',url:''},
             {id:'10',titulo:'Madrid Design Festival 2026',fecha:'2026-02-05',hora:'',lugar:'Varios espacios en Madrid',descripcion:'Festival de diseño con 55 exposiciones y 162 actividades',categoria:'Exposición',url:'https://madriddesignfestival.lafabrica.com'},
             {id:'11',titulo:'FORMA Design Fair',fecha:'2026-03-04',hora:'',lugar:'Matadero Madrid',descripcion:'Primera feria española de diseño de colección',categoria:'Exposición',url:'https://madriddesignfestival.lafabrica.com'},
-            {id:'12',titulo:'Elipa Flamenca - Actuación 1',fecha:'2026-02-07',hora:'19:00',lugar:'Centro Cultural Príncipe de Asturias',descripcion:'Ciclo de flamenco gratuito. Artistas: David de Arahal & Sandra Carrasco, Ricardo Fernández del Moral y más. Entrada libre hasta completar aforo',categoria:'Música',url:'https://zocoflamenco.com/el-zoco/elipa-flamenca-2026-del-5-al-28-de-febrero/'},
-            {id:'13',titulo:'Elipa Flamenca - Actuación 2',fecha:'2026-02-08',hora:'19:00',lugar:'Centro Cultural Príncipe de Asturias',descripcion:'Ciclo de flamenco gratuito. Artistas: Laura Reyes & Javier Pimiento, Mercedes Luján y más. Entrada libre hasta completar aforo',categoria:'Música',url:'https://zocoflamenco.com/el-zoco/elipa-flamenca-2026-del-5-al-28-de-febrero/'},
-            {id:'14',titulo:'Elipa Flamenca - Actuación 3',fecha:'2026-02-14',hora:'19:00',lugar:'Centro Cultural Príncipe de Asturias',descripcion:'Ciclo de flamenco gratuito. Artistas: Rafael Jiménez "El Tato", Rafa del Calli y más. Entrada libre hasta completar aforo',categoria:'Música',url:'https://zocoflamenco.com/el-zoco/elipa-flamenca-2026-del-5-al-28-de-febrero/'},
-            {id:'15',titulo:'Elipa Flamenca - Actuación 4',fecha:'2026-02-15',hora:'19:00',lugar:'Centro Cultural Príncipe de Asturias',descripcion:'Ciclo de flamenco gratuito. Artistas: Eleazar Cerreduela, José Luis Montón y más. Entrada libre hasta completar aforo',categoria:'Música',url:'https://zocoflamenco.com/el-zoco/elipa-flamenca-2026-del-5-al-28-de-febrero/'},
-            {id:'16',titulo:'Elipa Flamenca - Actuación 5',fecha:'2026-02-21',hora:'19:00',lugar:'Centro Cultural Príncipe de Asturias',descripcion:'Ciclo de flamenco gratuito con grandes figuras del flamenco madrileño. Entrada libre hasta completar aforo',categoria:'Música',url:'https://zocoflamenco.com/el-zoco/elipa-flamenca-2026-del-5-al-28-de-febrero/'},
-            {id:'17',titulo:'Elipa Flamenca - Actuación 6',fecha:'2026-02-22',hora:'19:00',lugar:'Centro Cultural Príncipe de Asturias',descripcion:'Ciclo de flamenco gratuito con grandes figuras del flamenco madrileño. Entrada libre hasta completar aforo',categoria:'Música',url:'https://zocoflamenco.com/el-zoco/elipa-flamenca-2026-del-5-al-28-de-febrero/'},
-            {id:'18',titulo:'Elipa Flamenca - Cierre',fecha:'2026-02-28',hora:'19:00',lugar:'Centro Cultural Príncipe de Asturias',descripcion:'Última actuación del ciclo de flamenco gratuito Elipa Flamenca 2026. Entrada libre hasta completar aforo',categoria:'Música',url:'https://zocoflamenco.com/el-zoco/elipa-flamenca-2026-del-5-al-28-de-febrero/'}
+            {id:'12',titulo:'Elipa Flamenca - Actuación 1',fecha:'2026-02-07',hora:'19:00',lugar:'Centro Cultural Príncipe de Asturias',descripcion:'Ciclo de flamenco gratuito. Artistas: David de Arahal & Sandra Carrasco y más',categoria:'Música',url:'https://zocoflamenco.com/el-zoco/elipa-flamenca-2026-del-5-al-28-de-febrero/'},
+            {id:'13',titulo:'Elipa Flamenca - Actuación 2',fecha:'2026-02-08',hora:'19:00',lugar:'Centro Cultural Príncipe de Asturias',descripcion:'Ciclo de flamenco gratuito. Artistas: Laura Reyes & Javier Pimiento y más',categoria:'Música',url:'https://zocoflamenco.com/el-zoco/elipa-flamenca-2026-del-5-al-28-de-febrero/'},
+            {id:'14',titulo:'Elipa Flamenca - Actuación 3',fecha:'2026-02-14',hora:'19:00',lugar:'Centro Cultural Príncipe de Asturias',descripcion:'Ciclo de flamenco gratuito. Artistas: Rafael Jiménez El Tato y más',categoria:'Música',url:'https://zocoflamenco.com/el-zoco/elipa-flamenca-2026-del-5-al-28-de-febrero/'},
+            {id:'15',titulo:'Elipa Flamenca - Actuación 4',fecha:'2026-02-15',hora:'19:00',lugar:'Centro Cultural Príncipe de Asturias',descripcion:'Ciclo de flamenco gratuito. Artistas: Eleazar Cerreduela, José Luis Montón y más',categoria:'Música',url:'https://zocoflamenco.com/el-zoco/elipa-flamenca-2026-del-5-al-28-de-febrero/'},
+            {id:'16',titulo:'Elipa Flamenca - Actuación 5',fecha:'2026-02-21',hora:'19:00',lugar:'Centro Cultural Príncipe de Asturias',descripcion:'Ciclo de flamenco gratuito con grandes figuras del flamenco madrileño',categoria:'Música',url:'https://zocoflamenco.com/el-zoco/elipa-flamenca-2026-del-5-al-28-de-febrero/'},
+            {id:'17',titulo:'Elipa Flamenca - Actuación 6',fecha:'2026-02-22',hora:'19:00',lugar:'Centro Cultural Príncipe de Asturias',descripcion:'Ciclo de flamenco gratuito con grandes figuras del flamenco madrileño',categoria:'Música',url:'https://zocoflamenco.com/el-zoco/elipa-flamenca-2026-del-5-al-28-de-febrero/'},
+            {id:'18',titulo:'Elipa Flamenca - Cierre',fecha:'2026-02-28',hora:'19:00',lugar:'Centro Cultural Príncipe de Asturias',descripcion:'Última actuación del ciclo de flamenco gratuito Elipa Flamenca 2026',categoria:'Música',url:'https://zocoflamenco.com/el-zoco/elipa-flamenca-2026-del-5-al-28-de-febrero/'},
+            {id:'19',titulo:'Literatura, individuo y territorio',fecha:'2026-02-09',hora:'19:00',lugar:'Círculo de Bellas Artes',descripcion:'Con Carmen Madorrán e Irene Ortiz Gala',categoria:'Charla',url:'https://circulobellasartes.com'},
+            {id:'20',titulo:'Sobre el porvenir de nuestras universidades',fecha:'2026-02-10',hora:'19:00',lugar:'Círculo de Bellas Artes',descripcion:'Con Clara Ramas y Diego Garrocho',categoria:'Charla',url:'https://circulobellasartes.com'},
+            {id:'21',titulo:'La Mesa Redonda: Lo crujiente',fecha:'2026-02-10',hora:'20:00',lugar:'Círculo de Bellas Artes',descripcion:'Con Manuel Gare, Ana Gorostizu y María Sánchez Saorín',categoria:'Teatro',url:'https://circulobellasartes.com'},
+            {id:'22',titulo:'Día de la mujer y la niña en Ciencia',fecha:'2026-02-11',hora:'10:00',lugar:'Círculo de Bellas Artes',descripcion:'Mujeres que hacen ciencia',categoria:'Charla',url:'https://circulobellasartes.com'},
+            {id:'23',titulo:'La Casa de las Artes. Abierta desde 1926',fecha:'2026-02-11',hora:'19:00',lugar:'Círculo de Bellas Artes',descripcion:'Inauguración de exposición',categoria:'Exposición',url:'https://circulobellasartes.com'},
+            {id:'24',titulo:'Moisés P. Sánchez: Beyond Beethoven',fecha:'2026-02-11',hora:'19:30',lugar:'Círculo de Bellas Artes',descripcion:'Concierto benéfico',categoria:'Música',url:'https://circulobellasartes.com'},
+            {id:'25',titulo:'Sobre el porvenir de nuestras universidades',fecha:'2026-02-12',hora:'19:00',lugar:'Círculo de Bellas Artes',descripcion:'Con Rodrigo Castro y Antonio Sánchez',categoria:'Charla',url:'https://circulobellasartes.com'},
+            {id:'26',titulo:'Otros principios de autoridad',fecha:'2026-02-12',hora:'19:00',lugar:'Círculo de Bellas Artes',descripcion:'Ciclo Maestras contemporáneas. Con Marisa Manchado, Pilar Serrano Betored y Marta López Vilar',categoria:'Charla',url:'https://circulobellasartes.com'},
+            {id:'27',titulo:'Un Carnaval legendario',fecha:'2026-02-14',hora:'22:30',lugar:'Círculo de Bellas Artes',descripcion:'Fiesta de carnaval',categoria:'Fiesta',url:'https://circulobellasartes.com'},
+            {id:'28',titulo:'Konstantin Krimmel & Ammiel Bushakevitz',fecha:'2026-02-15',hora:'19:00',lugar:'Círculo de Bellas Artes',descripcion:'Círculo de Cámara',categoria:'Música',url:'https://circulobellasartes.com'},
+            {id:'29',titulo:'La impaciencia del corazón',fecha:'2026-02-11',hora:'19:00',lugar:'Goethe-Institut Madrid, C/ Zurbarán 21',descripcion:'Cine Club Goethe. Película basada en la novela de Stefan Zweig. VO con subtítulos en español',categoria:'Cine',url:'https://www.goethe.de/ins/es/es/ver.cfm?event_id=27202456'},
+            {id:'30',titulo:'Nuevos y viejos colonialismos',fecha:'2026-02-21',hora:'12:30',lugar:'La Casa Encendida',descripcion:'Conversar, un mundo en tránsito. Con Nabil Al Raee y Dani Zelko',categoria:'Charla',url:'https://www.lacasaencendida.es/ciclo/conversar-un-mundo-en-transito'},
+            {id:'31',titulo:'El papel de Europa',fecha:'2026-02-21',hora:'19:30',lugar:'La Casa Encendida',descripcion:'Conversar, un mundo en tránsito. Con Claudio Francavilla y Áurea Moltó',categoria:'Charla',url:'https://www.lacasaencendida.es/ciclo/conversar-un-mundo-en-transito'}
         ];
 
         const EXHIBITIONS = [
@@ -114,13 +143,17 @@
         function showView(view) {
             document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
             event.target.classList.add('active');
+            document.getElementById('agendaView').classList.add('hidden');
+            document.getElementById('exposicionesView').classList.add('hidden');
+            document.getElementById('mapaView').classList.add('hidden');
+            
             if (view === 'agenda') {
                 document.getElementById('agendaView').classList.remove('hidden');
-                document.getElementById('exposicionesView').classList.add('hidden');
-            } else {
-                document.getElementById('agendaView').classList.add('hidden');
+            } else if (view === 'exposiciones') {
                 document.getElementById('exposicionesView').classList.remove('hidden');
                 renderExhibitions();
+            } else if (view === 'mapa') {
+                document.getElementById('mapaView').classList.remove('hidden');
             }
         }
 
